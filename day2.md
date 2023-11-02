@@ -9,19 +9,31 @@
 #include <unistd.h>
 
 int global_var = 10;
+int access = 0;
 
 void *thread_function2(void *num) {
-    printf("스레드2 진입")
-    global_var += 1;
-    printf("스레드2 실행 결과: %d\n", global_var);
-    pthread_exit(NULL);
+    while(true){
+        if(access == 0);
+        else{
+            global_var += 1;
+            printf("스레드2 실행 결과: %d\n", global_var);
+            access = 1;
+            pthread_exit(NULL);
+        }
+    }
 }
 
 void *thread_function1(void *num) {
-    printf("스레드1 진입")
-    global_var *= 2;
-    printf("스레드1 실행 결과: %d\n", global_var);
-    pthread_exit(NULL);
+    while(true){
+        if(access == 0);
+        else{
+            printf("스레드1 진입")
+            global_var *= 2;
+            printf("스레드1 실행 결과: %d\n", global_var);
+            access = 1;
+            pthread_exit(NULL);
+        }
+    }
 }
 
 int main(void){

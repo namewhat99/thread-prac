@@ -4,23 +4,43 @@
 #include <unistd.h>
 
 int global_var = 10;
-
-//스레드끼리 공유하는 영역은 stack 을 제외한 영역
+int accessAble = 1;
 
 void *thread_function2(void *num) {
-    printf("스레드2 진입\n");
-    global_var += 1;
-    printf("스레드2 실행 결과: %d\n", global_var);
-    pthread_exit(NULL);
+
+    while(1){
+        if(accessAble == 0) {
+            printf("스레드2 실행 불가능\n");
+            continue;
+        }
+        else{
+            accessAble = 0;
+            printf("스레드2 실행 시작\n");
+            global_var += 1;
+            printf("스레드2 실행 결과: %d\n", global_var);
+            accessAble = 1;
+            pthread_exit(NULL);
+        }
+    }
 }
 
 void *thread_function1(void *num) {
-    printf("스레드1 진입\n");
-    global_var *= 2;
-    printf("스레드1 실행 결과: %d\n", global_var);
-    pthread_exit(NULL);
-}
 
+    while(1){
+        if(accessAble == 0) {
+            printf("스레드1 실행 불가능\n");
+            continue;
+        }
+        else{
+            accessAble = 0;                 // entry section
+            printf("스레드1 실행 시작\n");
+            global_var *= 2;
+            printf("스레드1 실행 결과: %d\n", global_var);
+            accessAble = 1;                // exit section  
+            pthread_exit(NULL);
+        }
+    }
+}
 
 int main(void){
     
