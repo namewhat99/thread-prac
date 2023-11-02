@@ -18,8 +18,8 @@ void *thread_function2(void *arg) {
     return (void *)(intptr_t)result;
 }
 
-void *thread_function1(void *arg) {
-    int *input = (int *)arg;
+void *thread_function1(void *num) {
+    int *input = (int *)z;
     int result = 0;
 
 
@@ -36,13 +36,11 @@ int main(void){
     pthread_t thread1 , thread2, thread3;
     
     int pid1 , pid2, pid3;
-    int num1 = 5;
-    int num2 = 10;
-    int num3 = 15;
-    void* result1 = 0, *result2 = 0, *result3 = 0;
+    int num = 5;
+    void* result = NULL;
 
-    pthread_create(&thread1  , NULL , &thread_function1 , &num1);
-    pthread_create(&thread2  , NULL , &thread_function2 , &num2);
+    pthread_create(&thread1  , NULL , &thread_function1 , &num);
+    pthread_create(&thread2  , NULL , &thread_function2 , &num);
 
     pthread_join(thread1, (void **)&result1);
     pthread_join(thread2, (void **)&result2);

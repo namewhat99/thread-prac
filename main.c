@@ -3,48 +3,36 @@
 #include <pthread.h>
 #include <unistd.h>
 
-void *thread_function2(void *arg) {
-    int *input = (int *)arg;
-    int result2 = 0;
+int global_var = 10;
 
-    for (int i = 1; i <= *input; i++) {
-        printf("스레드 2: %d\n", i);
-        result2 += i;
-    }
-    printf("스레드 2의 결과******: %d\n", result2);
-    return (void *)(intptr_t)result2;
+//스레드끼리 공유하는 영역은 stack 을 제외한 영역
+
+void *thread_function2(void *num) {
+    printf("스레드2 진입\n");
+    global_var += 1;
+    printf("스레드2 실행 결과: %d\n", global_var);
+    pthread_exit(NULL);
 }
 
-void *thread_function1(void *arg) {
-    int *input = (int *)arg;
-    int result1 = 0;
-
-    for (int i = 1; i <= *input; i++) {
-        printf("스레드 1: %d\n", i);
-        result1 += i;
-    }
-    printf("스레드 1의 결과******: %d\n", result1);
-    return (void *)(intptr_t)result1;
+void *thread_function1(void *num) {
+    printf("스레드1 진입\n");
+    global_var *= 2;
+    printf("스레드1 실행 결과: %d\n", global_var);
+    pthread_exit(NULL);
 }
+
 
 int main(void){
     
-    pthread_t thread1 , thread2, thread3;
+    pthread_t thread1 , thread2;
 
-    int pid1 , pid2, pid3;
-    int num1 = 10;
-    int num2 = 10;
-    void* result1 = 0, *result2 = 0, *result3 = 0;
+    pthread_create(&thread1  , NULL , thread_function1 , NULL);
+    pthread_create(&thread2  , NULL , thread_function2 , NULL);
 
-    pthread_create(&thread1  , NULL , &thread_function1 , &num1);
-    pthread_create(&thread2  , NULL , &thread_function2 , &num2);
-
-    pthread_join(thread1, (void **)&result1);
-    pthread_join(thread2, (void **)&result2);
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
     
-    printf("스레드 1의 결과: %d\n", (int)(intptr_t)result1);
-    printf("스레드 2의 결과: %d\n", (int)(intptr_t)result2);
+    printf("스레드 실행 결과: %d\n", global_var);
 
     return 1;
 }
-
